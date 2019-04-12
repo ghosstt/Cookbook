@@ -1,0 +1,31 @@
+<form [formGroup]="addIngredientForm">
+    <h2 md-dialog-title>Add Ingredient</h2>
+    <hr>
+    <mat-dialog-content>
+        <div class="example-container">
+            <p>
+                <mat-form-field>
+                    <input matInput
+                        formControlName="ingredientName"
+                        placeholder="Name">
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field>
+                    <textarea matInput
+                        formControlName="ingredientDescription"
+                        placeholder="Description"
+                        cdkTextareaAutosize
+                        cdkAutosizeMinRows="5"
+                        cdkAutosizeMaxRows="5">
+                    </textarea>
+                </mat-form-field>        
+            </p>
+        </div>
+    </mat-dialog-content>
+    <!-- <hr>
+    <mat-dialog-actions>
+        <button type="submit" md-raised-button>Add</button>&nbsp;
+        <button type="button" md-raised-button (click)="cancel()">Cancel</button>
+    </mat-dialog-actions> -->
+</form>

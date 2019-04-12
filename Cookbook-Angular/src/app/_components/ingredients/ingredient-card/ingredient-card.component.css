@@ -1,0 +1,24 @@
+.card {
+  cursor: pointer;
+}
+
+.card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card-img-wrapper:after {
+    content: '';
+    display: block;
+    padding-top: 100%;
+  }
+  
+  .card-img-wrapper img {
+    width: auto;
+    height: 100%;
+    max-width: none;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }

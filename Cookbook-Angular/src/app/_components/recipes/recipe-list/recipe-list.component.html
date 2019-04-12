@@ -1,0 +1,20 @@
+<div class="container mt-5">
+  <div class="row">
+    <div *ngFor="let recipe of recipes" class="col-lg-2 col-md-3 col-sm-4">
+      <app-recipe-card [recipe]="recipe"></app-recipe-card>
+    </div>
+
+    <!-- <div class="col-lg-2 col-md-3 col-sm-4">
+      <div class="card bg-light border-secondary mb-3">
+          <div class="card-img-wrapper">
+            <img [src]="" alt="Add Ingredient" class="card-img-top">
+          </div>
+          <div class="card-footer bg-transparent border-secondary text-center mb-1">
+            Add Ingredient
+          </div>
+        </div>
+      </div> -->
+  </div>
+</div>
+  
+  

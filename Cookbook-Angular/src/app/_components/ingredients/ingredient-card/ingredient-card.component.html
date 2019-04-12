@@ -1,0 +1,22 @@
+<div class="card bg-light border-secondary mb-3" (click)="openUpdateIngredientDialog()">
+  <div class="card-img-wrapper">
+    <img src="../../../../assets/images/ingredients.png" [alt]="ingredient.name" class="card-img-top">
+  </div>
+  <div class="card-footer bg-transparent border-secondary text-center mb-1">
+    {{ ingredient.name }}
+  </div>
+</div>
+
+
+<!-- <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ ingredient.Name }}</mat-card-title>
+    </mat-card-header>
+    <div class="card-img-wrapper">
+        <img mat-card-image [src]="ingredient.ImageSrc" [alt]="ingredient.Name">
+    </div>
+    <mat-card-actions>
+      <button mat-button>Edit</button>
+      <button mat-button>Delete</button>
+    </mat-card-actions>
+</mat-card> -->

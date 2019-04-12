@@ -1,0 +1,52 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-secondary mb-3" (click)="openCreateRecipeDialog()">
+        <div class="card-img-wrapper">
+          <img src="../../../assets/images/create_recipe.png" alt="Create Recipe" class="card-img-top">
+        </div>
+        <div class="card-footer bg-transparent border-secondary text-center mb-1">
+          <i class="fa fa-book text-secondary"></i>
+          Create Recipe
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-secondary mb-3" (click)="openAddIngredientDialog()">
+        <div class="card-img-wrapper">
+          <img src="../../../assets/images/add_ingredient.png" alt="Add Ingredient" class="card-img-top">
+        </div>
+        <div class="card-footer bg-transparent border-secondary text-center mb-1">
+          <i class="fa fa-book text-secondary"></i>
+          Add Ingredient
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-secondary mb-3" [routerLink]="['/recipe/list']">
+        <div class="card-img-wrapper">
+          <img src="../../../assets/images/recipe.png" alt="Recipe List" class="card-img-top">
+        </div>
+        <div class="card-footer bg-transparent border-secondary text-center mb-1">
+          <i class="fa fa-book text-secondary"></i>
+          Recipe List
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-secondary mb-3" [routerLink]="['/ingredient/list']">
+        <div class="card-img-wrapper">
+          <img src="../../../assets/images/ingredients.png" alt="Ingredient List" class="card-img-top">
+        </div>
+        <div class="card-footer bg-transparent border-secondary text-center mb-1">
+          <i class="fa fa-book text-secondary"></i>
+          Ingredient List
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cookbook.Api", "Cookbook.Api\Cookbook.Api.csproj", "{DB4BAA60-0318-46EE-86DE-3CA64576FEBE}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Cookbook.SqlServer", "Cookbook.SqlServer\Cookbook.SqlServer.sqlproj", "{46D2A26E-C28F-4E99-8959-DCED460502E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB4BAA60-0318-46EE-86DE-3CA64576FEBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB4BAA60-0318-46EE-86DE-3CA64576FEBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB4BAA60-0318-46EE-86DE-3CA64576FEBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB4BAA60-0318-46EE-86DE-3CA64576FEBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46D2A26E-C28F-4E99-8959-DCED460502E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46D2A26E-C28F-4E99-8959-DCED460502E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46D2A26E-C28F-4E99-8959-DCED460502E4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{46D2A26E-C28F-4E99-8959-DCED460502E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46D2A26E-C28F-4E99-8959-DCED460502E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46D2A26E-C28F-4E99-8959-DCED460502E4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1C0DFB7-68EE-4F3B-8C50-191975A6E93B}
+	EndGlobalSection
+EndGlobal
