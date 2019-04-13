@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { Ingredient } from 'src/app/_models/ingredient';
 import { IngredientEditComponent } from '../ingredient-edit/ingredient-edit.component';
 import { MatDialog } from '@angular/material';
@@ -12,7 +12,9 @@ export class IngredientCardComponent implements OnInit {
   @Input()
   ingredient: Ingredient;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(
+    public dialog: MatDialog,
+    private cdRef: ChangeDetectorRef) { }
 
   ngOnInit() {
   }
@@ -33,6 +35,10 @@ export class IngredientCardComponent implements OnInit {
         ingredient: this.ingredient
       },
       width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.cdRef.detectChanges();
     });
   }
 }

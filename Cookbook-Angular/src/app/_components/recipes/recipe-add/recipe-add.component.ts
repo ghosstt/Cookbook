@@ -39,7 +39,12 @@ export class RecipeAddComponent implements OnInit {
     this.add();
   }
 
-  getFormData(): Recipe {
+  add() {
+    if (this.addRecipeForm.invalid) {
+      this.alertifyService.error('Error: Cannot save, recipe name is empty');
+      return;
+    }
+
     const recipe: Recipe = {
       recipeId: this.savedRecipeId,
       userId: this.data.userId,
@@ -49,18 +54,9 @@ export class RecipeAddComponent implements OnInit {
       ingredientIds: this.addRecipeForm.get('recipeIngredients').value
     };
 
-    return recipe;
-  }
-
-  add() {
-    const recipe = this.getFormData();
-
-    const hasRecipeName = (recipe.name !== undefined && recipe.name !== null && recipe.name.trim() !== '');
-    if (!hasRecipeName) {
-      return;
-    }
-
     this.recipeService.addRecipe(recipe).subscribe((recipeId: number) => {
+      console.log(recipeId, 'Success: Add Recipe');
+
       if (recipeId > 0) {
         this.addRecipeForm.get('recipeName').disable();
         this.addRecipeForm.get('recipeDescription').disable();
@@ -68,8 +64,8 @@ export class RecipeAddComponent implements OnInit {
 
       this.savedRecipeId = recipeId;
     }, error => {
-      console.log(error);
-      this.alertifyService.error(error.error);
+      console.log(error, 'Error: Add Recipe');
+      this.alertifyService.error(error);
     });
   }
 }

@@ -49,8 +49,6 @@ export class RegisterComponent implements OnInit {
       } else {
         control2.setErrors(null);
       }
-
-      console.log(control2, 'test');
     };
   }
 
@@ -67,7 +65,7 @@ export class RegisterComponent implements OnInit {
       this.route.navigate(['/login']);
     }, error => {
       console.log(error);
-      this.alertifyService.error(error.error);
+      this.alertifyService.error(error);
     });
   }
 

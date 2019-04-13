@@ -6,6 +6,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
+                console.log(error, 'http-error-interceptor');
                 let errMsg = '';
 
                 // Client Side Error
@@ -14,13 +15,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
                 } else {
                     // Server Side Error
-
-                    if (error.status === 401) {
-                        errMsg = 'Access denied';
-                    } else {
-                        // errMsg = `Error Code: ${error.status},  Message: ${error.message}`;
-                        return throwError(error);
-                    }
+                    errMsg = `Error: ${error.status} - ${error.error.errorMessage}`;
                 }
 
                 return throwError(errMsg);

@@ -13,6 +13,7 @@ import { Ingredient } from 'src/app/_models/ingredient';
 })
 export class RecipeEditComponent implements OnInit, AfterViewInit {
   editRecipeForm: FormGroup;
+  origValue: Recipe;
 
   constructor(
     public dialogRef: MatDialogRef<RecipeEditComponent>,
@@ -33,6 +34,15 @@ export class RecipeEditComponent implements OnInit, AfterViewInit {
       recipeDescription: [this.data.recipe.description],
       recipeIngredients: [this.data.recipe.ingredientIds]
     });
+
+    this.origValue = {
+      recipeId: this.data.recipe.recipeId,
+      userId: this.data.recipe.userId,
+      name: this.data.recipe.name,
+      description: this.data.recipe.description,
+      ingredientIds: [...this.data.recipe.ingredientIds],
+      imgSrc: this.data.recipe.imgSrc,
+    };
   }
 
   ngAfterViewInit() {
@@ -40,25 +50,35 @@ export class RecipeEditComponent implements OnInit, AfterViewInit {
   }
 
   onSelectionChange(event, options: MatListOption[]) {
-    // this.editRecipeForm.get('recipeIngredients').setValue(this.data.recipe.ingredientIds);
     this.edit();
   }
 
-  edit() {
+  setData() {
     this.data.recipe.name = this.editRecipeForm.get('recipeName').value;
     this.data.recipe.description = this.editRecipeForm.get('recipeDescription').value;
     this.data.recipe.ingredientIds = this.editRecipeForm.get('recipeIngredients').value;
+  }
 
-    const hasRecipeName = (this.data.recipe.name !== undefined && this.data.recipe.name !== null && this.data.recipe.name.trim() !== '');
-    if (!hasRecipeName) {
+  setOrigData() {
+    this.data.recipe.name = this.origValue.name;
+    this.data.recipe.description = this.origValue.description;
+    this.data.recipe.ingredientIds = [...this.origValue.ingredientIds];
+  }
+
+  edit() {
+    if (this.editRecipeForm.invalid) {
+      this.alertifyService.error('Error: Cannot save, recipe name is empty');
       return;
     }
 
+    this.setData();
+
     this.recipeService.updateRecipe(this.data.recipe).subscribe((recipeId: number) => {
-      console.log(recipeId, 'updateRecipe');
+      console.log(recipeId, 'Success: Edit Recipe');
     }, error => {
-      console.log(error);
-      this.alertifyService.error(error.error);
+      this.setOrigData();
+      console.log(error, 'Error: Edit Recipe');
+      this.alertifyService.error(error);
     });
   }
 
