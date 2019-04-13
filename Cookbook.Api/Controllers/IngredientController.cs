@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Cookbook.Api.Dto;
 using Cookbook.Api.Entities;
-using Cookbook.Api.Infrastructure.Repositories;
+using Cookbook.Api.Features.Ingredient;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -14,19 +15,19 @@ namespace Cookbook.Api.Controllers
     [ApiController]
     public class IngredientController : ControllerBase
     {
-        private readonly IIngredientRepository _repository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public IngredientController(IIngredientRepository repository, IMapper mapper)
+        public IngredientController(IMapper mapper, IMediator mediator)
         {
-            _repository = repository;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet("get")]
         public async Task<IActionResult> GetIngredient(int userId, int ingredientId)
         {
-            var ingredient = await _repository.GetIngredient(userId, ingredientId);
+            var ingredient = await _mediator.Send(new GetIngredient(userId, ingredientId));
             var ingredientsDto = _mapper.Map<IngredientDto>(ingredient);
             return Ok(ingredientsDto);
         }
@@ -34,7 +35,7 @@ namespace Cookbook.Api.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetIngredients(int userId)
         {
-            var ingredients = await _repository.GetIngredients(userId);
+            var ingredients = await _mediator.Send(new GetIngredients(userId));
             var ingredientsDto = _mapper.Map<IEnumerable<IngredientDto>>(ingredients);
             return Ok(ingredientsDto);
         }
@@ -43,7 +44,7 @@ namespace Cookbook.Api.Controllers
         public async Task<IActionResult> AddIngredient(IngredientDto ingredientDto)
         {
             var ingredient = _mapper.Map<Ingredient>(ingredientDto);
-            var ingredientId = await _repository.AddIngredient(ingredient);
+            var ingredientId = await _mediator.Send(new AddIngredient(ingredient));
             return Ok(ingredientId);
         }
 
@@ -51,7 +52,7 @@ namespace Cookbook.Api.Controllers
         public async Task<IActionResult> UpdateIngredient(IngredientDto ingredientDto)
         {
             var ingredient = _mapper.Map<Ingredient>(ingredientDto);
-            var ingredientId = await _repository.UpdateIngredient(ingredient);
+            var ingredientId = await _mediator.Send(new UpdateIngredient(ingredient));
             return Ok(ingredientId);
         }
     }

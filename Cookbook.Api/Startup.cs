@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using MediatR;
 using Cookbook.Api.Data;
-using Cookbook.Api.Infrastructure.Repositories;
+using Cookbook.Api.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Reflection;
 
 namespace Cookbook.Api
 {
@@ -27,15 +29,13 @@ namespace Cookbook.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // SQL Server
             string sqlServerConnection = Configuration.GetConnectionString("SqlServerConnection");
             services.AddDbContext<CookbookDbContext>(options => options.UseSqlServer(sqlServerConnection, opt => opt.EnableRetryOnFailure()));
 
-            //string sqliteConnection = Configuration.GetConnectionString("SqliteConnection");
-            //services.AddDbContext<CookbookDbContext>(options => options.UseSqlite(sqliteConnection));
-
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IRecipeRepository, RecipeRepository>();
-            services.AddScoped<IIngredientRepository, IngredientRepository>();
+            // Sqlite
+            // string sqliteConnection = Configuration.GetConnectionString("SqliteConnection");
+            // services.AddDbContext<CookbookDbContext>(options => options.UseSqlite(sqliteConnection));
 
             services.AddCors(options =>
             {
@@ -66,8 +66,16 @@ namespace Cookbook.Api
                 };
             });
             services.AddAutoMapper();
+            services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => {
+                options.Filters.Add(typeof(ExceptionFilter));
+            })
+            .AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,7 +83,7 @@ namespace Cookbook.Api
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
             }
             else
             {

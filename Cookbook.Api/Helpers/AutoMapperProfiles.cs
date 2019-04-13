@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Cookbook.Api.Dto;
 using Cookbook.Api.Entities;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Cookbook.Api.Helpers
 {
@@ -11,9 +9,9 @@ namespace Cookbook.Api.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<Recipe, RecipeDto>();
-            CreateMap<Ingredient, IngredientDto>();
-
             CreateMap<RecipeDto, Recipe>();
+
+            CreateMap<Ingredient, IngredientDto>();
             CreateMap<IngredientDto, Ingredient>();
         }
     }
