@@ -1,5 +1,5 @@
-﻿using Cookbook.Api.Dto;
-using Cookbook.Api.Features.Auth;
+﻿using Cookbook.Api.Features.Auth;
+using Cookbook.Api.Features.Auth.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -20,13 +20,13 @@ namespace Cookbook.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            var createdUser = await _mediator.Send(new Register(
+            var result = await _mediator.Send(new Register(
                 registerDto.UserName,
                 registerDto.Password,
                 registerDto.FirstName,
                 registerDto.LastName));
 
-            return StatusCode(201, "Register Successful");
+            return Ok(result);
         }
 
         [HttpPost("login")]

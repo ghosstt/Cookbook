@@ -1,5 +1,4 @@
-﻿using Cookbook.Api.Data.Configuration;
-using Cookbook.Api.Entities;
+﻿using Cookbook.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 

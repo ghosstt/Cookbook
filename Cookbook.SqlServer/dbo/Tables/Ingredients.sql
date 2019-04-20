@@ -5,5 +5,5 @@
 	, [Name] VARCHAR(128) NOT NULL
 	, [Description] VARCHAR(512)
 	, [ImgSrc] VARCHAR(512)
-	, [CreatedDate] DATETIME
+	, [CreatedDate] DATETIME2  NOT NULL DEFAULT GETDATE()
 );

@@ -1,12 +1,10 @@
-﻿using AutoMapper;
-using Cookbook.Api.Dto;
-using Cookbook.Api.Entities;
-using Cookbook.Api.Features.Recipe;
-using Cookbook.Api.Features.Recipe.Ingredients;
+﻿using Cookbook.Api.Features.Common;
+using Cookbook.Api.Features.Recipe.Commands;
+using Cookbook.Api.Features.Recipe.Dto;
+using Cookbook.Api.Features.Recipe.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Cookbook.Api.Controllers
@@ -16,28 +14,24 @@ namespace Cookbook.Api.Controllers
     [ApiController]
     public class RecipeController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public RecipeController(IMapper mapper, IMediator mediator)
+        public RecipeController(IMediator mediator)
         {
-            _mapper = mapper;
             _mediator = mediator;
         }
 
         [HttpGet("get")]
         public async Task<IActionResult> GetRecipe(int userId, int recipeId)
         {
-            var recipe = await _mediator.Send(new GetRecipe(userId, recipeId));
-            var recipesDto = _mapper.Map<RecipeDto>(recipe);
-            return Ok(recipesDto);
+            var recipeDto = await _mediator.Send(new GetRecipe(userId, recipeId));
+            return Ok(recipeDto);
         }
 
         [HttpGet("list")]
         public async Task<IActionResult> GetRecipes(int userId)
         {
-            var recipes = await _mediator.Send(new GetRecipes(userId));
-            var recipesDto = _mapper.Map<IEnumerable<RecipeDto>>(recipes);
+            var recipesDto = await _mediator.Send(new GetRecipes(userId));
             return Ok(recipesDto);
         }
 
@@ -51,33 +45,15 @@ namespace Cookbook.Api.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddRecipe(RecipeDto recipeDto)
         {
-            int recipeId = 0;
-
-            if (recipeDto.RecipeId == 0)
-            {
-                var recipe = _mapper.Map<Recipe>(recipeDto);
-                recipeId = await _mediator.Send(new AddRecipe(recipe));
-                await _mediator.Send(new RemoveAllRecipeIngredients(recipeId));
-                await _mediator.Send(new AddRecipeIngredientIds(recipeId, recipeDto.IngredientIds));
-            }
-            else if (await _mediator.Send(new HasRecipeById(recipeDto.RecipeId)))
-            {
-                recipeId = recipeDto.RecipeId;
-                await _mediator.Send(new RemoveAllRecipeIngredients(recipeId));
-                await _mediator.Send(new AddRecipeIngredientIds(recipeId, recipeDto.IngredientIds));
-            }
-
-            return Ok(recipeId);
+            CommandResult<int> result = await _mediator.Send(new AddRecipe(recipeDto));
+            return Ok(result);
         }
 
         [HttpPut("update")]
         public async Task<IActionResult> UpdateRecipe(RecipeDto recipeDto)
         {
-            var recipe = _mapper.Map<Recipe>(recipeDto);
-            var recipeId = await _mediator.Send(new UpdateRecipe(recipe));
-            await _mediator.Send(new RemoveAllRecipeIngredients(recipeId));
-            await _mediator.Send(new AddRecipeIngredientIds(recipeId, recipeDto.IngredientIds));
-            return Ok(recipeId);
+            CommandResult<int> result = await _mediator.Send(new UpdateRecipe(recipeDto));
+            return Ok(result);
         }
     }
 }

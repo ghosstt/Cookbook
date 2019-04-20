@@ -1,4 +1,4 @@
-﻿using Cookbook.Api.Entities;
+﻿using Cookbook.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

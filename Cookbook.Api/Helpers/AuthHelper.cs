@@ -1,4 +1,4 @@
-﻿using Cookbook.Api.Entities;
+﻿using Cookbook.Api.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
