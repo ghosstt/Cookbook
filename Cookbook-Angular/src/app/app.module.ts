@@ -22,43 +22,43 @@ import { RegisterComponent } from './_components/register/register.component';
 export const tokenGetter = () => localStorage.getItem('token');
 
 @NgModule({
-   declarations: [
-      AppComponent,
-      LoginComponent,
-      RegisterComponent,
-      HomeComponent
-   ],
-   imports: [
-      BrowserModule,
-      AppRoutingModule,
-      HttpClientModule,
-      ReactiveFormsModule,
-      BsDropdownModule.forRoot(),
-      JwtModule.forRoot({
-         config: {
-            tokenGetter,
-            whitelistedDomains: ['localhost:5000'],
-            blacklistedRoutes: ['localhost:5000/api/auth']
-         }
-      }),
-      SharedModule,
-      MaterialModule,
-      RecipeModule,
-      IngredientModule,
-      BrowserAnimationsModule
-   ],
-   providers: [
-      AuthService,
-      AlertifyService,
-      AuthGuard,
-      {
-         provide: HTTP_INTERCEPTORS,
-         useClass: HttpErrorInterceptor,
-         multi: true,
-      }
-   ],
-   bootstrap: [
-      AppComponent
-   ]
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        RegisterComponent,
+        HomeComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        BsDropdownModule.forRoot(),
+        JwtModule.forRoot({
+            config: {
+                tokenGetter,
+                whitelistedDomains: ['localhost:5001'],
+                blacklistedRoutes: ['localhost:5001/api/auth']
+            }
+        }),
+        SharedModule,
+        MaterialModule,
+        RecipeModule,
+        IngredientModule,
+        BrowserAnimationsModule
+    ],
+    providers: [
+        AuthService,
+        AlertifyService,
+        AuthGuard,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true,
+        }
+    ],
+    bootstrap: [
+        AppComponent
+    ]
 })
 export class AppModule { }

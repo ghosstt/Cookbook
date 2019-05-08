@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore;
+﻿using Cookbook.Api.Configuration.WebHostBuilder;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Cookbook.Api
@@ -12,6 +13,8 @@ namespace Cookbook.Api
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                // .ConfigureKestrel()
+                .UseSetting("https_port", "5001")
                 .UseStartup<Startup>();
     }
 }

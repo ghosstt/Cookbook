@@ -1,0 +1,23 @@
+FQDN = localhost
+
+[req]
+default_bits = 2048
+default_md = sha256
+prompt = no
+x509_extensions = v3_req
+distinguished_name = dn
+
+[dn]
+C = PH
+ST = Bulacan
+L = Meycauayan
+O = None
+OU = None
+emailAddress = email@domain.com
+CN = $FQDN
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = $FQDN

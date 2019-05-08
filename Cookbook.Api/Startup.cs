@@ -1,17 +1,12 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using Cookbook.Api.Configuration.Startup;
 using Cookbook.Api.Data;
-using Cookbook.Api.Filters;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Cookbook.Api.Features.User.Services;
+using Cookbook.Api.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Reflection;
+using System;
 
 namespace Cookbook.Api
 {
@@ -22,64 +17,27 @@ namespace Cookbook.Api
             Configuration = configuration;
         }
 
-        private readonly string _policy1 = "policy1";
-
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // SQL Server
-            string sqlServerConnection = Configuration.GetConnectionString("SqlServerConnection");
-            services.AddDbContext<CookbookDbContext>(options => options.UseSqlServer(sqlServerConnection, opt => opt.EnableRetryOnFailure()));
+            string secretKey = Configuration.GetSection("AppSettings:SecretKey").Value;
+            var signingCredentials = AuthHelper.GetSigningCredentials(secretKey);
 
-            // Sqlite
-            // string sqliteConnection = Configuration.GetConnectionString("SqliteConnection");
-            // services.AddDbContext<CookbookDbContext>(options => options.UseSqlite(sqliteConnection));
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy(_policy1, builder =>
-                {
-                    builder.WithOrigins("http://localhost:4200")
-                            .AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
-                });
-            });
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:SecretKey").Value)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
-            services.AddAutoMapper();
-            services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
-
-            services.AddMvc(options => {
-                options.Filters.Add(typeof(ExceptionFilter));
-            })
-            .AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.ConfigureDatabase(Configuration);
+            services.ConfigureScopedServices();
+            services.ConfigureCors();
+            services.ConfigureJwtOptions(Configuration, signingCredentials);
+            services.ConfigureAuthentication(Configuration, signingCredentials.Key);
+            services.ConfigureAuthorization();
+            services.ConfigureContextAccessor();
+            services.ConfigureSwagger();
+            services.ConfigureAutoMapper();
+            services.ConfigureMediator();
+            services.ConfigureMvc();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -91,10 +49,23 @@ namespace Cookbook.Api
                 // app.UseHsts();
             }
 
-            app.UseCors(_policy1);
-            // app.UseHttpsRedirection();
+            app.UseCors("localhost_4200");
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Cookbook API"));
+
+            // add default admin
+            using (IServiceScope serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetRequiredService<CookbookDbContext>())
+                {
+                    IUserService userService = new UserService(context);
+                    Guid x = userService.CreateDefaultAdminUser().GetAwaiter().GetResult();
+                }
+            }
         }
     }
 }

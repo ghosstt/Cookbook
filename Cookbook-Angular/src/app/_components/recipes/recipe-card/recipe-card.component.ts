@@ -9,47 +9,47 @@ import { forkJoin } from 'rxjs';
 import { Ingredient } from 'src/app/_models/ingredient';
 
 @Component({
-  selector: 'app-recipe-card',
-  templateUrl: './recipe-card.component.html',
-  styleUrls: ['./recipe-card.component.css']
+    selector: 'app-recipe-card',
+    templateUrl: './recipe-card.component.html',
+    styleUrls: ['./recipe-card.component.css']
 })
 export class RecipeCardComponent implements OnInit {
-  @Input()
-  recipe: Recipe;
+    @Input()
+    recipe: Recipe;
 
-  constructor(
-    public dialog: MatDialog,
-    private recipeService: RecipeService,
-    private ingredientService: IngredientService,
-    private cdRef: ChangeDetectorRef) { }
+    constructor(
+        public dialog: MatDialog,
+        private recipeService: RecipeService,
+        private ingredientService: IngredientService,
+        private cdRef: ChangeDetectorRef) { }
 
-  ngOnInit() {
-  }
-
-  getImgSrc(filename: string): string {
-    if (filename === null) {
-      return null;
+    ngOnInit() {
     }
 
-    return `../../../../assets/images/ingredients/${ filename }`;
-  }
+    getImgSrc(filename: string): string {
+        if (filename === null) {
+            return null;
+        }
 
-  openUpdateRecipeDialog() {
-    forkJoin(
-      this.ingredientService.getIngredients(this.recipe.userId),
-      this.recipeService.getRecipeIngredientIds(this.recipe.userId, this.recipe.recipeId))
-    .subscribe(([ingredientsList, recipeIngredientIds]) => {
-      this.recipe.ingredientIds = recipeIngredientIds;
-      const data = { recipe: this.recipe, ingredients: ingredientsList };
-      const dialogRef = this.dialog.open(RecipeEditComponent, {
-        disableClose: false,
-        data,
-        width: '400px'
-      });
+        return `../../../../assets/images/ingredients/${filename}`;
+    }
 
-      dialogRef.afterClosed().subscribe(() => {
-        this.cdRef.detectChanges();
-      });
-    });
-  }
+    openUpdateRecipeDialog() {
+        forkJoin(
+            this.ingredientService.getIngredients(),
+            this.recipeService.getRecipeIngredientIds(this.recipe.recipeId))
+            .subscribe(([ingredientsList, recipeIngredientIds]) => {
+                this.recipe.ingredientIds = recipeIngredientIds;
+                const data = { recipe: this.recipe, ingredients: ingredientsList };
+                const dialogRef = this.dialog.open(RecipeEditComponent, {
+                    disableClose: false,
+                    data,
+                    width: '400px'
+                });
+
+                dialogRef.afterClosed().subscribe(() => {
+                    this.cdRef.detectChanges();
+                });
+            });
+    }
 }

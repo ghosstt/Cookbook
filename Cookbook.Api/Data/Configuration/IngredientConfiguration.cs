@@ -1,4 +1,4 @@
-﻿using Cookbook.Api.Entities;
+﻿using Cookbook.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,6 +22,10 @@ namespace Cookbook.Api.Data.Configuration
             builder.Property(c => c.ImgSrc)
                 .IsRequired()
                 .HasColumnType("varchar(128)");
+
+            builder.Property(c => c.CreatedDate)
+                .IsRequired()
+                .HasColumnType("datetime");
         }
     }
 }
