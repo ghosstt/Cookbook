@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Cookbook.Api.Configuration.Startup
 {
@@ -7,7 +8,7 @@ namespace Cookbook.Api.Configuration.Startup
     {
         public static IServiceCollection ConfigureAutoMapper(this IServiceCollection services)
         {
-            services.AddAutoMapper();
+            services.AddAutoMapper(typeof(Api.Startup).GetTypeInfo().Assembly);
             return services;
         }
     }

@@ -2,10 +2,12 @@
 using Cookbook.Api.Data;
 using Cookbook.Api.Data.Entities;
 using Cookbook.Api.Features.Recipe.Dto;
+using Entities = Cookbook.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Cookbook.Api.Features.Recipe.Services
 {
@@ -23,34 +25,54 @@ namespace Cookbook.Api.Features.Recipe.Services
         #region Recipe
         public async Task<int> AddRecipe(RecipeDto recipeDto)
         {
-            int recipeId = 0;
             if (recipeDto.RecipeId == 0)
             {
-                recipeId = await addRecipe(recipeDto);
-                await UpdateRecipeIngredients(recipeId, recipeDto.IngredientIds);
+                if (await _context.Recipes.AnyAsync(r => r.Name == recipeDto.Name))
+                    throw new System.Exception($"Error: Recipe '{recipeDto.Name}' already exists");
+
+                var recipe = _mapper.Map<Entities.Recipe>(recipeDto);
+
+                await _context.Recipes.AddAsync(recipe);
+                await _context.SaveChangesAsync();
+
+                await UpdateRecipeIngredients(recipe.RecipeId, recipeDto.IngredientIds);
+                return recipe.RecipeId;
             }
             else if (await HasRecipe(recipeDto.RecipeId))
             {
-                recipeId = recipeDto.RecipeId;
-                await UpdateRecipeIngredients(recipeId, recipeDto.IngredientIds);
+                await UpdateRecipeIngredients(recipeDto.RecipeId, recipeDto.IngredientIds);
+                return recipeDto.RecipeId;
             }
 
-            return recipeId;
+            return 0; // or throw error
         }
 
         public async Task<int> UpdateRecipe(RecipeDto recipeDto)
         {
-            int recipeId = await updateRecipe(recipeDto);
-            return await UpdateRecipeIngredients(recipeId, recipeDto.IngredientIds);
+            if (await _context.Recipes.AnyAsync(r => r.RecipeId != recipeDto.RecipeId && r.Name == recipeDto.Name))
+                throw new System.Exception($"Error: Recipe '{recipeDto.Name}' already exists");
+
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.RecipeId == recipeDto.RecipeId);
+            if (recipe == null)
+                throw new System.Exception($"Error: Recipe with ID: {recipeDto.RecipeId} not found ");
+
+            recipe.Name = recipeDto.Name;
+            recipe.Description = recipeDto.Description;
+            recipe.ImgSrc = recipeDto.ImgSrc;
+
+            _context.Recipes.Update(recipe);
+            await _context.SaveChangesAsync();
+
+            return await UpdateRecipeIngredients(recipe.RecipeId, recipeDto.IngredientIds);
         }
 
-        public async Task<RecipeDto> GetRecipe(int userId, int recipeId)
+        public async Task<RecipeDto> GetRecipe(Guid userId, int recipeId)
         {
             var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.UserId == userId && r.RecipeId == recipeId);
             return _mapper.Map<RecipeDto>(recipe);
         }
 
-        public async Task<IEnumerable<RecipeDto>> GetRecipes(int userId)
+        public async Task<IEnumerable<RecipeDto>> GetRecipes(Guid userId)
         {
             var recipes = await _context.Recipes.Where(r => r.UserId == userId).OrderByDescending(r => r.CreatedDate).ToListAsync();
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
@@ -96,7 +118,7 @@ namespace Cookbook.Api.Features.Recipe.Services
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<int>> GetRecipeIngredientIds(int userId, int recipeId)
+        public async Task<IEnumerable<int>> GetRecipeIngredientIds(Guid userId, int recipeId)
         {
             var result = from r in _context.Recipes
                          join ri in _context.RecipeIngredients on r.RecipeId equals ri.RecipeId
@@ -104,40 +126,6 @@ namespace Cookbook.Api.Features.Recipe.Services
                          select ri.IngredientId;
 
             return await result.ToListAsync();
-        }
-        #endregion
-
-        #region Private Helper Methods
-        private async Task<int> addRecipe(RecipeDto recipeDto)
-        {
-            if (await _context.Recipes.AnyAsync(r => r.Name == recipeDto.Name))
-                throw new System.Exception($"Error: Recipe '{recipeDto.Name}' already exists");
-
-            recipeDto.RecipeId = 0;
-
-            var recipe = _mapper.Map<Data.Entities.Recipe>(recipeDto);
-
-            await _context.Recipes.AddAsync(recipe);
-            await _context.SaveChangesAsync();
-            return recipe.RecipeId;
-        }
-
-        public async Task<int> updateRecipe(RecipeDto recipeDto)
-        {
-            if (await _context.Recipes.AnyAsync(r => r.RecipeId != recipeDto.RecipeId && r.Name == recipeDto.Name))
-                throw new System.Exception($"Error: Recipe '{recipeDto.Name}' already exists");
-
-            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.RecipeId == recipeDto.RecipeId);
-            if (recipe == null)
-                throw new System.Exception($"Error: Recipe with ID: {recipeDto.RecipeId} not found ");
-
-            recipe.Name = recipeDto.Name;
-            recipe.Description = recipeDto.Description;
-            recipe.ImgSrc = recipeDto.ImgSrc;
-
-            _context.Recipes.Update(recipe);
-            await _context.SaveChangesAsync();
-            return recipe.RecipeId;
         }
         #endregion
     }

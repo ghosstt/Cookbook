@@ -1,14 +1,15 @@
 ﻿using Cookbook.Api.Features.Recipe.Dto;
 using MediatR;
+using System;
 
 namespace Cookbook.Api.Features.Recipe.Queries
 {
     public class GetRecipe : IRequest<RecipeDto>
     {
-        public int UserId { get; }
+        public Guid UserId { get; }
         public int RecipeId { get; }
 
-        public GetRecipe(int userId, int recipeId)
+        public GetRecipe(Guid userId, int recipeId)
         {
             UserId = userId;
             RecipeId = recipeId;

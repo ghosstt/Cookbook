@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { IngredientService } from 'src/app/_services/ingredient.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Ingredient } from 'src/app/_models/ingredient';
@@ -17,7 +17,6 @@ export class IngredientAddComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<IngredientAddComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { userId: number },
         private ingredientService: IngredientService,
         private alertifyService: AlertifyService,
         private formBuilder: FormBuilder) {
@@ -42,7 +41,7 @@ export class IngredientAddComponent implements OnInit {
 
         const ingredient: Ingredient = {
             ingredientId: 0,
-            userId: this.data.userId,
+            userId: '00000000-0000-0000-0000-000000000000',
             name: this.addIngredientForm.get('ingredientName').value,
             description: this.addIngredientForm.get('ingredientDescription').value,
             imgSrc: null

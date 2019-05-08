@@ -1,6 +1,6 @@
 export interface Ingredient {
     ingredientId: number;
-    userId: number;
+    userId: string;
     name: string;
     description: string;
     imgSrc: string;

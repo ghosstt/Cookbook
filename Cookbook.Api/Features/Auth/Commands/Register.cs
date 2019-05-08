@@ -1,21 +1,17 @@
-﻿using Cookbook.Api.Features.Common;
+﻿using Cookbook.Api.Features.Auth.Dto;
+using Cookbook.Api.Features.Common;
 using MediatR;
+using System;
 
-namespace Cookbook.Api.Features.Auth
+namespace Cookbook.Api.Features.Auth.Commands
 {
-    public class Register : IRequest<CommandResult<int>>
+    public class Register : IRequest<CommandResult<Guid>>
     {
-        public string UserName { get; }
-        public string Password { get; }
-        public string FirstName { get; }
-        public string LastName { get; }
+        public RegisterDto RegisterDto { get; }
 
-        public Register(string userName, string passWord, string firstName, string lastName)
+        public Register(RegisterDto registerDto)
         {
-            UserName = userName;
-            Password = passWord;
-            FirstName = firstName;
-            LastName = lastName;
+            RegisterDto = registerDto;
         }
     }
 }

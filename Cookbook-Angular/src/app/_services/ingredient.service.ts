@@ -14,17 +14,13 @@ export class IngredientService {
 
     constructor(private http: HttpClient) { }
 
-    getIngredient(userId: number, ingredientId: number): Observable<Ingredient> {
-        const params = new HttpParams()
-            .set('userId', userId.toString())
-            .set('ingredientId', ingredientId.toString());
-
+    getIngredient(ingredientId: number): Observable<Ingredient> {
+        const params = new HttpParams().set('ingredientId', ingredientId.toString());
         return this.http.get<Ingredient>(this.baseUrl + '/get', { params });
     }
 
-    getIngredients(userId: number): Observable<Ingredient[]> {
-        const params = new HttpParams().set('userId', userId.toString());
-        return this.http.get<Ingredient[]>(this.baseUrl + '/list', { params });
+    getIngredients(): Observable<Ingredient[]> {
+        return this.http.get<Ingredient[]>(this.baseUrl + '/list');
     }
 
     addIngredient(ingredient: Ingredient): Observable<CommandResult<number>> {

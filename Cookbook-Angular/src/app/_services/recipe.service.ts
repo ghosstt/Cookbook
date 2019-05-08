@@ -15,24 +15,17 @@ export class RecipeService {
 
     constructor(private http: HttpClient) { }
 
-    getRecipe(userId: number, recipeId: number): Observable<Recipe> {
-        const params = new HttpParams()
-            .set('userId', userId.toString())
-            .set('recipeId', recipeId.toString());
-
+    getRecipe(recipeId: number): Observable<Recipe> {
+        const params = new HttpParams().set('recipeId', recipeId.toString());
         return this.http.get<Recipe>(this.baseUrl + '/get', { params });
     }
 
-    getRecipes(userId: number): Observable<Recipe[]> {
-        const params = new HttpParams().set('userId', userId.toString());
-        return this.http.get<Recipe[]>(this.baseUrl + '/list', { params });
+    getRecipes(): Observable<Recipe[]> {
+        return this.http.get<Recipe[]>(this.baseUrl + '/list');
     }
 
-    getRecipeIngredientIds(userId: number, recipeId: number): Observable<number[]> {
-        const params = new HttpParams()
-            .set('userId', userId.toString())
-            .set('recipeId', recipeId.toString());
-
+    getRecipeIngredientIds(recipeId: number): Observable<number[]> {
+        const params = new HttpParams().set('recipeId', recipeId.toString());
         return this.http.get<number[]>(this.baseUrl + '/ingredients/ids', { params });
     }
 

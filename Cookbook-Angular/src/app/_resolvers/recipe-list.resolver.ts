@@ -11,7 +11,6 @@ import { AuthService } from '../_services/auth.service';
 export class RecipeListResolver implements Resolve<Recipe[]> {
     constructor(
         private recipeService: RecipeService,
-        private authService: AuthService,
         private alertifyService: AlertifyService,
         private router: Router) {
     }
@@ -19,7 +18,7 @@ export class RecipeListResolver implements Resolve<Recipe[]> {
     resolve(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<Recipe[]> {
-        return this.recipeService.getRecipes(this.authService.userId).pipe(
+        return this.recipeService.getRecipes().pipe(
             catchError(error => {
                 this.alertifyService.error('Problem retrieving data');
                 this.router.navigate(['/home']);

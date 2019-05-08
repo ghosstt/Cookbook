@@ -1,6 +1,5 @@
 ﻿using Cookbook.Api.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -8,7 +7,7 @@ using System.Text;
 
 namespace Cookbook.Api.Helpers
 {
-    internal static class AuthHelper
+    public static class AuthHelper
     {
         public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
@@ -33,30 +32,50 @@ namespace Cookbook.Api.Helpers
             }
         }
 
-        public static string GenerateToken(string secretKey, Claim[] claims)
+        public static SigningCredentials GetSigningCredentials(string secretKey)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
+        }
 
+        public static string GenerateTokenV1(JwtOptions jwtOptions, Claim[] claims)
+        {
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
+                Issuer = jwtOptions.Issuer,
+                Audience = jwtOptions.Audience,
+                NotBefore = jwtOptions.NotBefore,
+                Expires = jwtOptions.Expiration,
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(1),
-                SigningCredentials = credentials
+                SigningCredentials = jwtOptions.SigningCredentials
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-
             return tokenHandler.WriteToken(token);
+        }
+
+        public static string GenerateTokenV2(JwtOptions jwtOptions, Claim[] claims)
+        {
+            var jwt = new JwtSecurityToken(
+                issuer: jwtOptions.Issuer,
+                audience: jwtOptions.Audience,
+                notBefore: jwtOptions.NotBefore,
+                expires: jwtOptions.Expiration,
+                claims: claims,
+                signingCredentials: jwtOptions.SigningCredentials);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            return tokenHandler.WriteToken(jwt);
         }
 
         public static Claim[] GenerateClaims(User user)
         {
             return new Claim[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(JwtRegisteredClaimNames.NameId, user.UserId.ToString(), ClaimValueTypes.String),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName, ClaimValueTypes.String),
+                new Claim("test.claim", "Test Claim Value", ClaimValueTypes.String)
             };
         }
     }

@@ -7,35 +7,33 @@ import { AuthService } from 'src/app/_services/auth.service';
 import { Ingredient } from 'src/app/_models/ingredient';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  constructor(
-    public dialog: MatDialog,
-    private ingredientService: IngredientService,
-    private authService: AuthService) {
-  }
+    constructor(
+        public dialog: MatDialog,
+        private ingredientService: IngredientService) {
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
-  openCreateRecipeDialog() {
-    this.ingredientService.getIngredients(this.authService.userId).subscribe((ingredients: Ingredient[]) => {
-      const dialogRef = this.dialog.open(RecipeAddComponent, {
-        disableClose: false,
-        data: { userId: this.authService.userId, ingredients },
-        width: '400px'
-      });
-    });
-  }
+    openCreateRecipeDialog() {
+        this.ingredientService.getIngredients().subscribe((ingredients: Ingredient[]) => {
+            const dialogRef = this.dialog.open(RecipeAddComponent, {
+                disableClose: false,
+                data: { ingredients },
+                width: '400px'
+            });
+        });
+    }
 
-  openAddIngredientDialog() {
-    const dialogRef = this.dialog.open(IngredientAddComponent, {
-      disableClose: false,
-      data: { userId: this.authService.userId },
-      width: '400px'
-    });
-  }
+    openAddIngredientDialog() {
+        const dialogRef = this.dialog.open(IngredientAddComponent, {
+            disableClose: false,
+            width: '400px'
+        });
+    }
 }

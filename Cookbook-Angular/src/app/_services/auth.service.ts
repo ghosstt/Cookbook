@@ -29,7 +29,7 @@ export class AuthService {
         if (this.loggedIn()) {
             const token: string = localStorage.getItem('token');
             const decodedToken = this.jwtHelper.decodeToken(token);
-            return parseInt(decodedToken.nameid, 10);
+            return decodedToken.nameid;
         }
 
         return null;

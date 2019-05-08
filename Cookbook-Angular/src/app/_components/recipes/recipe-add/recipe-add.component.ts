@@ -18,7 +18,7 @@ export class RecipeAddComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<RecipeAddComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { userId: number, ingredients: Ingredient[] },
+        @Inject(MAT_DIALOG_DATA) public data: { ingredients: Ingredient[] },
         private recipeService: RecipeService,
         private alertifyService: AlertifyService,
         private formBuilder: FormBuilder) {
@@ -48,7 +48,7 @@ export class RecipeAddComponent implements OnInit {
 
         const recipe: Recipe = {
             recipeId: this.savedRecipeId,
-            userId: this.data.userId,
+            userId: '00000000-0000-0000-0000-000000000000',
             name: this.addRecipeForm.get('recipeName').value,
             description: this.addRecipeForm.get('recipeDescription').value,
             imgSrc: null,

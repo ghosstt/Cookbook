@@ -1,16 +1,15 @@
-﻿using MediatR;
+﻿using Cookbook.Api.Features.Auth.Dto;
+using MediatR;
 
-namespace Cookbook.Api.Features.Auth
+namespace Cookbook.Api.Features.Auth.Queries
 {
-    public class Login : IRequest<string>
+    public class Login : IRequest<LoginResult>
     {
-        public string UserName { get; }
-        public string Password { get; }
+        public LoginDto LoginDto { get; }
 
-        public Login(string userName, string passWord)
+        public Login(LoginDto loginDto)
         {
-            UserName = userName;
-            Password = passWord;
+            LoginDto = loginDto;
         }
     }
 }

@@ -1,45 +1,25 @@
-﻿using Cookbook.Api.Data;
-using Microsoft.EntityFrameworkCore;
-using MediatR;
+﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using Cookbook.Api.Helpers;
-using Cookbook.Api.Data.Entities;
 using Cookbook.Api.Features.Common;
+using Cookbook.Api.Features.Auth.Services;
+using System;
 
-namespace Cookbook.Api.Features.Auth
+namespace Cookbook.Api.Features.Auth.Commands
 {
-    public class RegisterHandler : IRequestHandler<Register, CommandResult<int>>
+    public class RegisterHandler : IRequestHandler<Register, CommandResult<Guid>>
     {
-        private readonly CookbookDbContext _context;
+        private readonly IAuthService _authService;
 
-        public RegisterHandler(CookbookDbContext context)
+        public RegisterHandler(IAuthService authService)
         {
-            _context = context;
+            _authService = authService;
         }
 
-        public async Task<CommandResult<int>> Handle(Register request, CancellationToken cancellationToken)
+        public async Task<CommandResult<Guid>> Handle(Register request, CancellationToken cancellationToken)
         {
-            if (await _context.Users.AnyAsync(u => u.UserName == request.UserName))
-                throw new System.Exception("Username already exists");
-
-            var user = new User();
-            user.UserName = request.UserName.ToLower();
-            user.FirstName = request.FirstName;
-            user.LastName = request.LastName;
-
-            byte[] passwordHash = null;
-            byte[] passwordSalt = null;
-
-            AuthHelper.CreatePasswordHash(request.Password, out passwordHash, out passwordSalt);
-
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            return CommandResult<int>.Success(user.UserId);
+            Guid userId = await _authService.Register(request.RegisterDto);
+            return CommandResult<Guid>.Success(userId);
         }
     }
 }

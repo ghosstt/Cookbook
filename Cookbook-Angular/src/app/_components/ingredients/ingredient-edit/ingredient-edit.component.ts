@@ -18,7 +18,7 @@ export class IngredientEditComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<IngredientEditComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { userId: number, ingredient: Ingredient },
+        @Inject(MAT_DIALOG_DATA) public data: { ingredient: Ingredient },
         private ingredientService: IngredientService,
         private alertifyService: AlertifyService,
         private formBuilder: FormBuilder) {

@@ -1,40 +1,25 @@
-﻿using Cookbook.Api.Data;
-using Cookbook.Api.Helpers;
+﻿using Cookbook.Api.Features.Auth.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cookbook.Api.Features.Auth
+namespace Cookbook.Api.Features.Auth.Queries
 {
-    public class LoginHandler : IRequestHandler<Login, string>
+    public class LoginHandler : IRequestHandler<Login, LoginResult>
     {
-        private readonly IConfiguration _config;
-        private readonly CookbookDbContext _context;
+        private readonly IAuthService _authService;
 
-        public LoginHandler(IConfiguration config, CookbookDbContext context)
+        public LoginHandler(IAuthService authService)
         {
-            _config = config;
-            _context = context;
+            _authService = authService;
         }
 
-        public async Task<string> Handle(Login request, CancellationToken cancellationToken)
+        public async Task<LoginResult> Handle(Login request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName);
-
-            if (user == null)
-                throw new UnauthorizedAccessException("Unauthorized Access");
-
-            if (!AuthHelper.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-                throw new UnauthorizedAccessException("Unauthorized Access");
-
-            string secretKey = _config.GetSection("AppSettings:SecretKey").Value;
-            Claim[] claims = AuthHelper.GenerateClaims(user);
-
-            return AuthHelper.GenerateToken(secretKey, claims);
+            return new LoginResult()
+            {
+                Token = await _authService.Login(request.LoginDto)
+        };
         }
     }
 }

@@ -12,14 +12,13 @@ export class IngredientListResolver implements Resolve<Ingredient[]> {
     constructor(
         private ingredientService: IngredientService,
         private alertifyService: AlertifyService,
-        private authService: AuthService,
         private router: Router) {
     }
 
     resolve(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<Ingredient[]> {
-        return this.ingredientService.getIngredients(this.authService.userId).pipe(
+        return this.ingredientService.getIngredients().pipe(
             catchError(error => {
                 this.alertifyService.error('Problem retrieving data');
                 this.router.navigate(['/home']);
