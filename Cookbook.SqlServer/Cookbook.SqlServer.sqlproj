@@ -70,6 +70,7 @@
     <Folder Include="Security\Security\Logins" />
     <Folder Include="Security\Security\Users" />
     <Folder Include="Security\Insert" />
+    <Folder Include="Security\Triggers" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Post Deployment\Script.PostDeployment.sql" />
@@ -99,5 +100,7 @@
     <None Include="Security\Insert\PermissionGroups.sql" />
     <None Include="Security\Insert\Permissions.sql" />
     <Build Include="Security\Tables\UserPermissions.sql" />
+    <Build Include="Security\Triggers\UserTrigger.sql" />
+    <Build Include="Security\Tables\UserAudits.sql" />
   </ItemGroup>
 </Project>

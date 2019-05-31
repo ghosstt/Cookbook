@@ -17,10 +17,12 @@ namespace Cookbook.Api.Features.Ingredient.Controllers
     public class IngredientController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IAuthorizationService _authService;
 
-        public IngredientController(IMediator mediator)
+        public IngredientController(IMediator mediator, IAuthorizationService authService)
         {
             _mediator = mediator;
+            _authService = authService;
         }
 
         [HttpGet("get")]
@@ -31,13 +33,20 @@ namespace Cookbook.Api.Features.Ingredient.Controllers
             return Ok(ingredient);
         }
 
-        [Authorize(Policy = "TestPolicy")]
+        // [Authorize(Policy = "TestPolicy")]
         [HttpGet("list")]
         public async Task<IActionResult> GetIngredients()
         {
-            Guid userId = User.GetUserId();
-            var ingredients = await _mediator.Send(new GetIngredients(userId));
-            return Ok(ingredients);
+            var authorize = await _authService.AuthorizeAsync(user: User, resource: null, policyName: "TestPolicy");
+
+            if (authorize.Succeeded)
+            {
+                Guid userId = User.GetUserId();
+                var ingredients = await _mediator.Send(new GetIngredients(userId));
+                return Ok(ingredients);
+            }
+
+            return Forbid();
         }
 
         [HttpPost("add")]
